@@ -28,7 +28,12 @@ const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><p className="text-muted-foreground">Carregando...</p></div>;
+  if (loading)
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Carregando...</p>
+      </div>
+    );
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 };
@@ -36,7 +41,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
   const { isAdmin, loading: adminLoading } = useAdmin();
-  if (loading || adminLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><p className="text-muted-foreground">Carregando...</p></div>;
+  if (loading || adminLoading)
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Carregando...</p>
+      </div>
+    );
   if (!user) return <Navigate to="/login" replace />;
   if (!isAdmin) return <Navigate to="/" replace />;
   return <>{children}</>;
@@ -45,24 +55,116 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   const { user, loading } = useAuth();
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><p className="text-muted-foreground">Carregando...</p></div>;
+  if (loading)
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Carregando...</p>
+      </div>
+    );
 
   return (
     <>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Auth />} />
-        <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-        <Route path="/acao/:slug" element={<ProtectedRoute><ActionDetail /></ProtectedRoute>} />
-        <Route path="/acao/:slug/participar" element={<ProtectedRoute><Participate /></ProtectedRoute>} />
-        <Route path="/aulas" element={<ProtectedRoute><Classes /></ProtectedRoute>} />
-        <Route path="/doacoes" element={<ProtectedRoute><Donations /></ProtectedRoute>} />
-        <Route path="/mapa" element={<ProtectedRoute><Map /></ProtectedRoute>} />
-        <Route path="/perfil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/responsavel" element={<ProtectedRoute><ParentDashboard /></ProtectedRoute>} />
-        <Route path="/configuracoes" element={<AdminRoute><Settings /></AdminRoute>} />
-        <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
-        <Route path="/ajuda" element={<ProtectedRoute><Help /></ProtectedRoute>} />
-        <Route path="/voluntarios" element={<ProtectedRoute><Volunteer /></ProtectedRoute>} />
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" replace /> : <Auth />}
+        />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Index />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/acao/:slug"
+          element={
+            <ProtectedRoute>
+              <ActionDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/acao/:slug/participar"
+          element={
+            <ProtectedRoute>
+              <Participate />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/aulas"
+          element={
+            <ProtectedRoute>
+              <Classes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doacoes"
+          element={
+            <ProtectedRoute>
+              <Donations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mapa"
+          element={
+            <ProtectedRoute>
+              <Map />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/responsavel"
+          element={
+            <ProtectedRoute>
+              <ParentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/configuracoes"
+          element={
+            <AdminRoute>
+              <Settings />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/ajuda"
+          element={
+            <ProtectedRoute>
+              <Help />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/voluntarios"
+          element={
+            <ProtectedRoute>
+              <Volunteer />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {user && <BottomNav />}

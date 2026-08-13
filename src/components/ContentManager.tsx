@@ -15,7 +15,23 @@ const ContentManager = () => {
   const [activeSection, setActiveSection] = useState(contentSections[0].key);
   const [values, setValues] = useState<Record<string, Record<string, string>>>(contentDefaults);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const handleUpload = async (fieldKey: string, file: File) => {
+    setUploading(fieldKey);
+    const ext = file.name.split(".").pop();
+    const path = `content/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from("news-images").upload(path, file);
+    if (error) {
+      toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
+    } else {
+      const { data } = supabase.storage.from("news-images").getPublicUrl(path);
+      updateField(fieldKey, data.publicUrl);
+      toast({ title: "Imagem enviada!", description: "Clique em salvar para aplicar." });
+    }
+    setUploading(null);
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -112,8 +128,22 @@ const ContentManager = () => {
                 />
               )}
 
-              {field.type === "image" && val && (
-                <img src={val} alt="Preview" className="mt-2 max-h-32 rounded-lg border border-border object-cover" />
+              {field.type === "image" && (
+                <div className="space-y-2">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    disabled={uploading === field.key}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleUpload(field.key, f);
+                    }}
+                  />
+                  {uploading === field.key && <p className="text-xs text-muted-foreground">Enviando imagem...</p>}
+                  {val && (
+                    <img src={val} alt="Preview" className="max-h-40 rounded-lg border border-border object-contain bg-white p-2" />
+                  )}
+                </div>
               )}
               {field.type === "video" && val && (
                 <div className="mt-2 relative w-full max-w-sm" style={{ paddingBottom: "32%" }}>

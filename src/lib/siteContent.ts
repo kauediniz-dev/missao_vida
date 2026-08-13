@@ -1,6 +1,7 @@
 // Schema/defaults of all editable content. Each section becomes a tab in the admin CMS.
 import heroBanner from "@/assets/hero-banner.png";
 import campanhaAgasalho from "@/assets/campanha-agasalho.jpeg";
+import pixQrCodeAsset from "@/assets/pix-qrcode.jpeg.asset.json";
 
 export type ContentField =
   | { key: string; label: string; type: "text" | "textarea" | "image" | "video" | "url"; placeholder?: string };
@@ -70,6 +71,15 @@ export const contentSections: ContentSection[] = [
     ],
   },
   {
+    key: "pix_qrcode",
+    label: "PIX — QR Code",
+    description: "Imagem e chave usadas em TODOS os PIX de doação (doações, assinatura, voluntários e ações).",
+    fields: [
+      { key: "image", label: "Imagem do QR Code PIX", type: "image" },
+      { key: "pix_key", label: "PIX copia e cola (chave ou código)", type: "textarea", placeholder: "Chave PIX ou código copia e cola" },
+    ],
+  },
+  {
     key: "help_contact",
     label: "Ajuda — Contato",
     fields: [
@@ -114,6 +124,10 @@ export const contentDefaults: Record<string, Record<string, string>> = {
     description: "Uma contribuição mensal livre para manter as ações da ONG acontecendo com previsibilidade.",
     video_url: "",
     video_placeholder: "Vídeo explicativo em breve",
+  },
+  pix_qrcode: {
+    image: pixQrCodeAsset.url,
+    pix_key: "",
   },
   help_contact: {
     phone: "(11) 94128-9195",

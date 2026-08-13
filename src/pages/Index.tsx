@@ -125,7 +125,7 @@ const Index = () => {
             news.map((n) => (
               <article key={n.id} className="bg-card rounded-xl overflow-hidden shadow-sm border border-border animate-scale-in">
                 {n.cover_image && (
-                  <img src={n.cover_image} alt={n.title} className="w-full h-44 object-cover" />
+                  <img src={n.cover_image} alt={n.title} className="w-full aspect-video object-cover" />
                 )}
                 <div className="p-4 space-y-2">
                   <p className="text-[0.65rem] text-muted-foreground uppercase tracking-wide">

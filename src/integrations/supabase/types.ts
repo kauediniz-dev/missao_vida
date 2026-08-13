@@ -75,28 +75,34 @@ export type Database = {
       }
       classes: {
         Row: {
-          category: string
+          address: string | null
+          category: string | null
           created_at: string
           day_of_week: string
           id: string
           max_capacity: number | null
           time_slot: string
+          title: string | null
         }
         Insert: {
-          category: string
+          address?: string | null
+          category?: string | null
           created_at?: string
           day_of_week: string
           id?: string
           max_capacity?: number | null
           time_slot: string
+          title?: string | null
         }
         Update: {
-          category?: string
+          address?: string | null
+          category?: string | null
           created_at?: string
           day_of_week?: string
           id?: string
           max_capacity?: number | null
           time_slot?: string
+          title?: string | null
         }
         Relationships: []
       }
@@ -130,6 +136,74 @@ export type Database = {
           pix_key?: string | null
           status?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      event_registrations: {
+        Row: {
+          event_id: string
+          id: string
+          registered_at: string
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          registered_at?: string
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          registered_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          address: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          event_date: string
+          id: string
+          max_capacity: number | null
+          time_slot: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_date: string
+          id?: string
+          max_capacity?: number | null
+          time_slot?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_date?: string
+          id?: string
+          max_capacity?: number | null
+          time_slot?: string | null
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }

@@ -23,6 +23,7 @@ import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 import ParentDashboard from "./pages/ParentDashboard";
 import Volunteer from "./pages/Volunteer";
+import Events from "./pages/Events";
 
 const queryClient = new QueryClient();
 
@@ -165,6 +166,116 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+        =======
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" replace /> : <Auth />}
+        />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Index />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/acao/:slug"
+          element={
+            <ProtectedRoute>
+              <ActionDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/acao/:slug/participar"
+          element={
+            <ProtectedRoute>
+              <Participate />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/aulas"
+          element={
+            <ProtectedRoute>
+              <Classes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/eventos"
+          element={
+            <ProtectedRoute>
+              <Events />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doacoes"
+          element={
+            <ProtectedRoute>
+              <Donations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mapa"
+          element={
+            <ProtectedRoute>
+              <Map />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/responsavel"
+          element={
+            <ProtectedRoute>
+              <ParentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/configuracoes"
+          element={
+            <AdminRoute>
+              <Settings />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <Admin />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/ajuda"
+          element={
+            <ProtectedRoute>
+              <Help />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/voluntarios"
+          element={
+            <ProtectedRoute>
+              <Volunteer />
+            </ProtectedRoute>
+          }
+        />
+        d64a7cebd793ee34fc1f7dd5e8cb4f6c6fd6c0ee
         <Route path="*" element={<NotFound />} />
       </Routes>
       {user && <BottomNav />}

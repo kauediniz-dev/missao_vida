@@ -14,21 +14,12 @@ import ContentManager from "@/components/ContentManager";
 import SponsorshipAdmin from "@/components/SponsorshipAdmin";
 import NewsAdmin from "@/components/NewsAdmin";
 import VolunteerAdmin from "@/components/VolunteerAdmin";
+import EventsAdmin from "@/components/EventsAdmin";
 
-type AdminTab = "alunos" | "doacoes" | "assinaturas" | "aulas" | "presencas" | "responsaveis" | "conteudo" | "noticias" | "apadrinhar" | "voluntarios" | "seguranca";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  futebol: "⚽ Futebol",
-  Futebol: "⚽ Futebol",
-  "jiu-jitsu": "🥋 Jiu-jítsu",
-  "Jiu-jítsu": "🥋 Jiu-jítsu",
-  informatica: "💻 Informática",
-  "Informática": "💻 Informática",
-  palestras: "🎤 Palestras",
-  Palestras: "🎤 Palestras",
-};
+type AdminTab = "alunos" | "doacoes" | "assinaturas" | "aulas" | "eventos" | "presencas" | "responsaveis" | "conteudo" | "noticias" | "apadrinhar" | "voluntarios" | "seguranca";
 
 const DAY_LABELS: Record<string, string> = {
+
   segunda: "Segunda", terca: "Terça", quarta: "Quarta", quinta: "Quinta",
   sexta: "Sexta", sabado: "Sábado", domingo: "Domingo",
   "Segunda-feira": "Segunda", "Terça-feira": "Terça", "Quarta-feira": "Quarta", "Quinta-feira": "Quinta",
@@ -54,7 +45,7 @@ const Admin = () => {
 
   const [showClassForm, setShowClassForm] = useState(false);
   const [showLinkForm, setShowLinkForm] = useState(false);
-  const [classForm, setClassForm] = useState({ category: "", day_of_week: "", time_slot: "", max_capacity: "30" });
+  const [classForm, setClassForm] = useState({ title: "", address: "", day_of_week: "", time_slot: "", max_capacity: "30" });
   const [linkForm, setLinkForm] = useState({ parent_user_id: "", child_user_id: "", relationship: "responsável" });
   const [subscriptionAmounts, setSubscriptionAmounts] = useState<Record<string, string>>({});
   const [attendanceDates, setAttendanceDates] = useState<Record<string, string>>({});
@@ -124,12 +115,13 @@ const Admin = () => {
   };
 
   const handleCreateClass = async () => {
-    if (!classForm.category || !classForm.day_of_week || !classForm.time_slot) {
-      toast({ title: "Preencha todos os campos", variant: "destructive" });
+    if (!classForm.title.trim() || !classForm.day_of_week || !classForm.time_slot) {
+      toast({ title: "Preencha nome, dia e horário", variant: "destructive" });
       return;
     }
     const { error } = await supabase.from("classes" as any).insert({
-      category: classForm.category,
+      title: classForm.title.trim(),
+      address: classForm.address.trim() || null,
       day_of_week: classForm.day_of_week,
       time_slot: classForm.time_slot,
       max_capacity: parseInt(classForm.max_capacity) || 30,
@@ -140,10 +132,11 @@ const Admin = () => {
     } else {
       toast({ title: "Aula criada com sucesso!" });
       setShowClassForm(false);
-      setClassForm({ category: "", day_of_week: "", time_slot: "", max_capacity: "30" });
+      setClassForm({ title: "", address: "", day_of_week: "", time_slot: "", max_capacity: "30" });
       loadData();
     }
   };
+
 
   const handleDeleteClass = async (id: string) => {
     const { error } = await supabase.from("classes" as any).delete().eq("id", id);
@@ -256,6 +249,7 @@ const Admin = () => {
     { id: "doacoes" as AdminTab, label: "Doações", icon: DollarSign, count: donations.length },
     { id: "assinaturas" as AdminTab, label: "Assinaturas", icon: CalendarDays, count: subscriptions.length },
     { id: "aulas" as AdminTab, label: "Aulas", icon: BookOpen, count: classes.length },
+    { id: "eventos" as AdminTab, label: "Eventos", icon: CalendarDays, count: 0 },
     { id: "presencas" as AdminTab, label: "Presenças", icon: UserCheck, count: attendance.length },
     
     { id: "conteudo" as AdminTab, label: "Conteúdo", icon: FileText, count: 0 },
@@ -271,7 +265,7 @@ const Admin = () => {
     const grouped: Record<string, any[]> = {};
     enrollments.forEach((e: any) => {
       const classInfo = e.classes;
-      const key = classInfo ? `${CATEGORY_LABELS[classInfo.category] || classInfo.category} - ${DAY_LABELS[classInfo.day_of_week] || classInfo.day_of_week} ${classInfo.time_slot}` : "Sem turma";
+      const key = classInfo ? `${classInfo.title || classInfo.category || "Aula"} - ${DAY_LABELS[classInfo.day_of_week] || classInfo.day_of_week} ${classInfo.time_slot}` : "Sem turma";
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(e);
     });
@@ -548,10 +542,12 @@ const Admin = () => {
                     <DialogContent>
                       <DialogHeader><DialogTitle>Criar Nova Aula</DialogTitle></DialogHeader>
                       <div className="space-y-4 mt-2">
-                        <div><Label>Categoria</Label><Select value={classForm.category} onValueChange={(v) => setClassForm({ ...classForm, category: v })}><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger><SelectContent><SelectItem value="Futebol">Futebol</SelectItem><SelectItem value="Jiu-jítsu">Jiu-jítsu</SelectItem><SelectItem value="Informática">Informática</SelectItem><SelectItem value="Palestras">Palestras</SelectItem></SelectContent></Select></div>
+                        
+                        <div><Label>Nome da aula</Label><Input placeholder="Ex: Futebol Infantil - Turma A" value={classForm.title} onChange={(e) => setClassForm({ ...classForm, title: e.target.value })} maxLength={120} /></div>
+                        <div><Label>Endereço</Label><Input placeholder="Rua, número, bairro, cidade" value={classForm.address} onChange={(e) => setClassForm({ ...classForm, address: e.target.value })} maxLength={200} /></div>
                         <div><Label>Dia da Semana</Label><Select value={classForm.day_of_week} onValueChange={(v) => setClassForm({ ...classForm, day_of_week: v })}><SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger><SelectContent>{Object.entries(DAY_LABELS).slice(0, 7).map(([val, label]) => <SelectItem key={val} value={val}>{label}</SelectItem>)}</SelectContent></Select></div>
                         <div><Label>Horário</Label><Input placeholder="Ex: 14:00 - 16:00" value={classForm.time_slot} onChange={(e) => setClassForm({ ...classForm, time_slot: e.target.value })} /></div>
-                        <div><Label>Capacidade Máxima</Label><Input type="number" value={classForm.max_capacity} onChange={(e) => setClassForm({ ...classForm, max_capacity: e.target.value })} /></div>
+                        <div><Label>Quantidade máxima de alunos</Label><Input type="number" min="1" value={classForm.max_capacity} onChange={(e) => setClassForm({ ...classForm, max_capacity: e.target.value })} /></div>
                         <Button onClick={handleCreateClass} className="w-full">Criar Aula</Button>
                       </div>
                     </DialogContent>
@@ -563,7 +559,7 @@ const Admin = () => {
                   return (
                     <div key={c.id} className="bg-card rounded-xl p-4 border border-border">
                       <div className="flex items-center justify-between mb-2">
-                        <div><h4 className="font-semibold text-foreground text-sm">{CATEGORY_LABELS[c.category] || c.category}</h4><p className="text-xs text-muted-foreground">{DAY_LABELS[c.day_of_week] || c.day_of_week} • {c.time_slot}</p></div>
+                        <div><h4 className="font-semibold text-foreground text-sm">{c.title || c.category || "Aula"}</h4><p className="text-xs text-muted-foreground">{DAY_LABELS[c.day_of_week] || c.day_of_week} • {c.time_slot}</p>{c.address && <p className="text-xs text-muted-foreground mt-0.5">📍 {c.address}</p>}</div>
                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDeleteClass(c.id)}><Trash2 className="h-4 w-4" /></Button>
                       </div>
                       <div className="flex items-center justify-between"><div className="flex items-center gap-2"><Users className="h-3.5 w-3.5 text-muted-foreground" /><span className="text-xs text-muted-foreground">{enrolled}/{c.max_capacity || "∞"} alunos</span></div><div className="h-1.5 flex-1 mx-3 bg-muted rounded-full overflow-hidden"><div className="h-full bg-primary rounded-full" style={{ width: `${Math.min((enrolled / (c.max_capacity || 30)) * 100, 100)}%` }} /></div></div>
@@ -572,6 +568,10 @@ const Admin = () => {
                 })}
               </div>
             )}
+
+            {activeTab === "eventos" && <EventsAdmin />}
+
+
 
             {activeTab === "presencas" && (
               <div className="space-y-4">

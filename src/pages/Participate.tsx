@@ -3,7 +3,8 @@ import { ArrowLeft, HandCoins, Shirt, Copy, Check, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
-import pixQrCode from "@/assets/pix-qrcode.jpeg.asset.json";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import PixCopyKey from "@/components/PixCopyKey";
 import { useToast } from "@/hooks/use-toast";
 import campanhaAgasalho from "@/assets/campanha-agasalho.jpeg";
 import heroBanner from "@/assets/hero-banner.png";
@@ -41,6 +42,8 @@ const Participate = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { get } = useSiteContent();
+  const pixQrImage = get("pix_qrcode", "image");
   const action = slug ? actionsData[slug] : null;
 
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -172,11 +175,12 @@ const Participate = () => {
 
                 <div className="bg-card rounded-2xl p-6 border border-border flex flex-col items-center gap-4">
                   <div className="bg-white p-4 rounded-xl">
-                    <img src={pixQrCode.url} alt="QR Code PIX" width={200} height={200} />
+                    <img src={pixQrImage} alt="QR Code PIX" width={200} height={200} />
                   </div>
                   <p className="text-xs text-muted-foreground text-center">
                     Escaneie o QR Code com o app do seu banco
                   </p>
+                  <PixCopyKey />
                 </div>
 
                 <Button variant="outline" className="w-full h-12" onClick={handleCopyPix}>

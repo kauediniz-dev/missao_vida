@@ -154,7 +154,7 @@ const NewsAdmin = () => {
                 </Button>
               )}
             </div>
-            {form.cover_image && <img src={form.cover_image} alt="Preview" className="mt-2 max-h-40 w-full rounded-lg border border-border object-cover" />}
+            {form.cover_image && <img src={form.cover_image} alt="Preview" className="mt-2 w-full aspect-video rounded-lg border border-border object-cover" />}
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1.5">
@@ -184,7 +184,7 @@ const NewsAdmin = () => {
         <div className="space-y-3">
           {items.map((n) => (
             <div key={n.id} className="bg-card rounded-xl border border-border overflow-hidden">
-              {n.cover_image && <img src={n.cover_image} alt={n.title} className="w-full h-32 object-cover" />}
+              {n.cover_image && <img src={n.cover_image} alt={n.title} className="w-full aspect-video object-cover" />}
               <div className="p-3 space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex-1">
